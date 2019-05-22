@@ -9,14 +9,20 @@ char outPut[MAX_DATA_LENGTH];
 char *port = "\\\\.\\COM3";
 char incoming[MAX_DATA_LENGTH];
 
-void establecer_conexion();
 
 int main(){
 
 	int opcion;
 
+        //instanciamos objeto arduino
+		SerialPort arduino(port);
 
-		//AGREGAMOS OPCIONES DE MENU
+		//verificamos conexion
+		if(arduino.isConnected()){
+
+			cout<<"Conexion correcta!!!\n";
+
+        //AGREGAMOS OPCIONES DE MENU SOLO DE HABER UNA CONEXION EXITOSA -------------------------------------
 		do{
 			cout<<"----------------------------Menu--------------------------------"<<endl;
 			cout<<"1. opcion 1"<<endl;
@@ -40,45 +46,19 @@ int main(){
 
 		}while(opcion!=5);
 
-
+        system("pause");
 
 	return 0;
-}
 
-void establecer_conexion(){
-
-	//instanciamos objeto arduino-----------------------------------------------------------
-		SerialPort arduino(port);
-
-		//verificamos conexion-----------------------------------------------------------------
-		if(arduino.isConnected()){
-
-			cout<<"Conexion correcta!!!";
-		}else{
+		}else{//EN CASO DE QUE FALLE LA CONEXION -----------------------------------------------
 
 			cout<<"Conexion incorrecta!!!!";
+
+                        system("pause");
+
+                        return 0;
 		}
-		//--------------------------------------------------------------------------------------
-
-		while(arduino.isConnected()){
-
-			string comando;
-			cin>>comando;
-
-			//AGREGAMOS UN ARRAY QUE CRECERA POR CADA VUELTA
-			char *matriz = new char[comando.size() +1];
-
-			copy(comando.begin(), comando.end(), matriz);
-
-			matriz[comando.size()]='\n';
-
-			arduino.writeSerialPort(matriz, MAX_DATA_LENGTH);
-			arduino.readSerialPort(outPut, MAX_DATA_LENGTH);
-
-			cout<<outPut;
-
-			delete [] matriz;
-
-		}
+		//-------------------------------------------------------------------------------------
 
 }
+
