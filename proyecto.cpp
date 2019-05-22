@@ -1,13 +1,9 @@
 #include <iostream>
-#include <conio2.h>
-#include <stdlib.h>
-#include "SerialClass.h"
-
-using namespace std;
-#include <iostream>
 #include <stdlib.h>
 #include <string>
 #include "SerialPort.h"
+
+using namespace std;
 
 char outPut[MAX_DATA_LENGTH];
 char *port = "\\\\.\\COM3";
