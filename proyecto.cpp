@@ -66,14 +66,14 @@ void establecer_conexion(){
 			cin>>comando;
 
 			//AGREGAMOS UN ARRAY QUE CRECERA POR CADA VUELTA
-			char *matriz = new char[comnado.size() +1];
+			char *matriz = new char[comando.size() +1];
 
 			copy(comando.begin(), comando.end(), matriz);
 
 			matriz[comando.size()]='\n';
 
-			arduino.write(matriz, MAX_DATA_LENGTH);
-			arduino.read(outPut, MAX_DATA_LENGTH);
+			arduino.writeSerialPort(matriz, MAX_DATA_LENGTH);
+			arduino.readSerialPort(outPut, MAX_DATA_LENGTH);
 
 			cout<<outPut;
 
