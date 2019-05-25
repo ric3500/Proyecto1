@@ -1,98 +1,62 @@
 #include <iostream>
 #include <stdlib.h>
-#include "SerialPort.h"
+#include "SerialClass.h" 
 
 using namespace std;
 
-char outPut[MAX_DATA_LENGTH];
-char *port = "\\\\.\\COM3";
-char incoming[MAX_DATA_LENGTH];
+void estado();
+void encendido();
 
 
-
-int main(){
-
-	int opcion;
-
-                //instanciamos objeto arduino-----------------------------------------------------------
-		SerialPort arduino(port);
-
-		//verificamos conexion-----------------------------------------------------------------
-        if(arduino.isConnected()){
-
-            cout<<"Conexion correcta!!!\n";
-
-                        //AGREGAMOS OPCIONES DE MENU SOLO DE HABER UNA CONEXION EXITOSA
-		do{
-                    cout<<"----------------------------Menu--------------------------------"<<endl;
-                    cout<<"1. opcion 1"<<endl;
-                    cout<<"2. opcion 2"<<endl;
-                    cout<<"3. opcion 3"<<endl;
-                    cout<<"4. Salir"<<endl;
-
-
-                    cin>>opcion;
-
-                if(opcion==1){
-
-                            char respuesta = 'n';
-                            string comando;
-
-                            while(arduino.isConnected() && respuesta == 'n'){
-
-                                cout<<"Ingrese la funcion que desea Ejecutar (ON/OFF)"<<endl;
-
-                                cin>>comando;
-
-                                //AGREGAMOS UN ARRAY QUE CRECERA POR CADA VUELTA
-                                char *matriz = new char[comando.size() +1];
-
-                                copy(comando.begin(), comando.end(), matriz);
-
-                                matriz[comando.size()]='\n';
-
-                                arduino.writeSerialPort(matriz, MAX_DATA_LENGTH);
-                                arduino.readSerialPort(outPut, MAX_DATA_LENGTH);
-
-                                cout<<outPut;
-
-                            delete [] matriz;
-
-                            cout<<"Desea realizar otra funcion (Si = s/ No = n)"<<endl;
-                            cin>>respuesta;
-
-                        }
-
-                    }else if(opcion==2){
-
-                            cout<<"opcion 2"<<endl;
-
-                    }else if(opcion==3){
-
-                            cout<<"opcion 3"<<endl;
-
-                    }else{
-
-                        cout<<"Opcion no valida"<<endl;
-                    }
-
-		}while(opcion!=4);
-
-        system("pause");
-
-
-
-		}else{
-
-			cout<<"Conexion incorrecta!!!!";
-
-                        system("pause");
-
+int main()
+{
+	int opc;
+	system("cls");
+	cout << "1. Ver estado del arduino." << endl;
+	cout << "2. encender o pagar." << endl;
+	cout << "3. Salid. " << endl;
+	cout << "ingrese la opcion que desea: ";
+	cin >> opc;
+	if (opc <= 3)
+	{
+		switch (opc)
+		{
+		case 1:{estado(); }break;
+		case 2:{encendido(); }break;
+		case 3:{exit(0); }break;
 
 		}
-		//-------------------------------------------------------------------------------------
+	}
+	else
+	{
+		cout << "La opcion ingresada no es valida." << endl;
+	}
+	system("pause");
 	return 0;
 }
 
+void estado(){
+	system("cls");
+	Serial* Puerto = new Serial("COM8");
+	if (Puerto->IsConnected())
+	{
+		cout << "Conexion correcta!!!\n";
+	}
+	
+	system("pause");
+	main();
+}
 
+void encendido(){
+	system("cls");
+	Serial* Puerto = new Serial("COM8");
 
+	// Comandos para Arduino.
+	char Luz_ON[] = "Luz_ON"; // Envía "Luz_ON" al puerto serie.
+	char lectura[50] = "\0"; // Guardan datos de entrada del puerto.
+	
+	Puerto->IsConnected();
+	// Encener luz.
+	cout << "Enviando: " << Luz_ON << endl; // Muestra en pantalla textos.
+	Puerto->WriteData(Luz_ON, sizeof(Luz_ON)-1); // Envía al puerto el texto "Luz_ON"
+}
