@@ -6,6 +6,7 @@ int compuerta1 = 6; // pin led de notificacion de puerta abierta
 int speak = 8; // pin del sumbador
 float sinval; //valor flotante para convercion
 int toneval; // guarda el valor que tiene que tener tono
+bool on = false;
 
 void setup(){
   pinMode(Led,OUTPUT);
@@ -16,6 +17,8 @@ void setup(){
   pinMode(speak,OUTPUT);
 
   digitalWrite(compuerta1, HIGH); // inicio mi compuerta con un valor de 5v
+  Serial.begin(9600);
+  while(!Serial) { ; }
 }
 
 void notificacion(){//aca esta la funcion de la notificacion de que se activo la alarma
@@ -103,10 +106,25 @@ void alarma(){//si las puertas estan abiertas o la alarma se activando dando una
   }
 }
 
+
 void loop(){
-  while(digitalRead(pulsador)==LOW);
+ 
+  while(digitalRead(pulsador)==LOW){
+    if( Serial.available()> 0) {
+          char caracter = Serial.read(); 
+          char palabra[]= "Alarm ON";   
+          if(caracter = "encendido")
+          {
+          Serial.print(palabra);
+          caracter = "";
+           break; 
+          }
+     }
+     delay(20);
+   };
   notificacion();
   activada();
   notificacion2();
-  while(digitalRead(pulsador)==HIGH);
+  while(digitalRead(pulsador)==HIGH){}
+  ;
 }
