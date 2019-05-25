@@ -1,12 +1,19 @@
 #include <iostream>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <fstream>
+#include <time.h>
 #include "SerialClass.h" 
+#define NOM_FILE "date.txt"
 
 using namespace std;
 
 void estado();
 void encendido();
 void fecha();
+void registro();
+bool encontrado;
 
 
 int main()
@@ -14,17 +21,19 @@ int main()
 	int opc;
 	system("cls");
 	cout << "1. Ver estado del arduino." << endl;
-	cout << "2. encender o pagar." << endl;
-	cout << "3. Salid. " << endl;
+	cout << "2. Encender o apagar alarma." << endl;
+	cout << "3. Registro de activacion" << endl;
+	cout << "4. Salir. " << endl;
 	cout << "ingrese la opcion que desea: ";
 	cin >> opc;
-	if (opc <= 3)
+	if (opc <= 4)
 	{
 		switch (opc)
 		{
 		case 1:{estado(); }break;
 		case 2:{encendido(); }break;
-		case 3:{exit(0); }break;
+		case 3:{registro(); }break;
+		case 4:{exit(0); }break;
 
 		}
 	}
@@ -43,25 +52,37 @@ void estado(){
 	{
 		cout << "Conexion correcta!!!\n";
 	}
-	
 	system("pause");
 	main();
 }
 
 void encendido(){
 	system("cls");
-	Serial* Puerto = new Serial("COM8");
-
-	// Comandos para Arduino.
-	char Luz_ON[] = "Luz_ON"; // Envía "Luz_ON" al puerto serie.
-	char lectura[50] = "\0"; // Guardan datos de entrada del puerto.
-	
-	Puerto->IsConnected();
-	// Encener luz.
-	cout << "Enviando: " << Luz_ON << endl; // Muestra en pantalla textos.
-	Puerto->WriteData(Luz_ON, sizeof(Luz_ON)-1); // Envía al puerto el texto "Luz_ON"
+	if (encontrado == false)
+	{
+		Serial* Arduino = new Serial("COM8");
+		char palabra[] = "encendido. ";
+		char palabra2[] = "Alarm ON";
+		cout << "Arduino conectado" << endl;
+		cout << "Enviando encendido " << endl;
+		Arduino->WriteData(palabra, sizeof(palabra)-1);
+		Sleep(500);
+		Arduino->ReadData(palabra, sizeof(palabra)-1);
+		cout << "Recibido: " << palabra << endl;
+		cout << "-------------------" << endl;
+		if (strstr(palabra, palabra2)!= NULL)
+		{
+			encontrado = true;
+		}
+		fecha();
+	}
+else
+{
+	cout << "La alarma ya esta activada." << endl;
 }
-
+	system("pause");
+	main();
+}
 
 void fecha(){
 	FILE    *file;
@@ -92,4 +113,22 @@ void fecha(){
 	}
 
 	fclose(file);
+}
+
+void registro(){
+	system("cls");
+	char  out_time[128], d[25];
+	ifstream archivo;
+	archivo.open("date.txt");
+	archivo >> out_time >> d;
+	cout << "Registros de activacion." << endl;
+	while (!archivo.eof())
+	{
+		cout << "activado -> " << out_time << " " << d << endl;
+		archivo >> out_time >> d;
+	}
+	archivo.close();
+	system("pause");
+	main();	
+
 }
